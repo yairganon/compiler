@@ -9,7 +9,10 @@
 	      `(,e ,@(string->exprlist (list->string s))))
 	    (lambda (w) `(failed with report: ,@w))))
 	    ))
-
+(define parse_expr
+        (lambda (expr_list)
+            (annotate-tc(pe->lex-pe(box-set(remove-applic-lambda-nil(eliminate-nested-defines(parse expr_list))))))))
+            
 (define code-gen 
     (lambda (pe) 
     ;string that contains lines of assembly instructions in the CISC architecture, such that when the execution of these instructions is complete,the value of e should be in the result register R0.
@@ -19,9 +22,9 @@
     (lambda (fileName assemblyTarget) 
             (let* ((file (file->string fileName))
                    (exprList (string->exprlist file))
-                   
-                  )
-            exprList)
+                   (parsed_exprs (map parse_expr exprList))
+                   )
+            parsed_exprs)
             
             
             ))
