@@ -1,23 +1,14 @@
 (load "compiler.scm")
 
 
-(define file->string
-(lambda (in-file)
-(let ((in-port (open-input-file in-file)))
-(letrec ((run
-(lambda ()
-(let ((ch (read-char in-port)))
-(if (eof-object? ch)
-(begin
-(close-input-port in-port)
-'())
-(cons ch (run)))))))
-(list->string
-(run))))))
-
-
-
-
+(define string->exprlist 
+  (lambda (string)
+    (if (or (null? string) (equal? string "")) '() 
+    (<sexpr> (string->list string)
+	    (lambda (e s)
+	      `(,e ,@(string->exprlist (list->string s))))
+	    (lambda (w) `(failed with report: ,@w))))
+	    ))
 
 (define code-gen 
     (lambda (pe) 
@@ -26,11 +17,11 @@
     
 (define compile-scheme-file 
     (lambda (fileName assemblyTarget) 
-            ((let* (file (file->string fileName))
-                   (exprList (string->exprList file))
+            (let* ((file (file->string fileName))
+                   (exprList (string->exprlist file))
                    
                   )
-            
+            exprList)
             
             
             ))
