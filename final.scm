@@ -29,10 +29,28 @@
       (lambda (lst)
           (if (null? lst) '()
               (cons (car lst) (remove-dup (filter (lambda (x) (not (equal? x (car lst)))) 
+                  
                                             (cdr lst)))))))
+;if lst1 include in lst2
+(define include-relation
+      (lambda(lst1 lst2)
+        (if (or (not (list? lst1)) (not (list? lst2))) #f
+            (let ((l1 (reverse lst1))
+                  (l2 (reverse lst2)))
+                  (letrec ((include-list
+                          (lambda (x y)
+                            (cond ((and(null? x) (null? y)) #t)
+                                  ((null? x) #t)
+                                  ((null? y) #f)
+                                  ((and (list? x) (list? y) (equal? (car x) (car y))) (include-list (cdr x) (cdr y)))
+                                  (else #f)))
+                          ))
+                  (include-list l1 l2))
+            ))))
+
 (define topological-sort
       (lambda(const-list)
-          const-list))
+          (sort include-relation const-list)))
 
 (define code-gen 
     (lambda (pe) 
