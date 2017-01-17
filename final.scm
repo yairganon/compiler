@@ -16,25 +16,21 @@
 (define find-const 
       (lambda (ast)
           (letrec ((foo 
-                      (lambda(ast bag)
-                          (cond ((or (null? ast) (not(list? ast))) '())
-                                ((and (list? ast) (equal? (car ast) 'const)) (append bag (cdr ast)))
-                                (else (fold-left (lambda(bag expr)(append bag (foo expr '()))) bag ast))
-                            )
-                      )))
-            (foo ast '()))
-            ))    
+                      (lambda (ast)
+                          (cond ((or (null? ast) (not (list? ast))) '())
+                                ((and (list? ast) (equal? (car ast) 'const)) (cdr ast))
+							(else (fold-left (lambda(bag expr)(append bag (foo expr))) '() ast))))))
+            (foo ast))))    
 
 (define remove-dup
       (lambda (lst)
           (if (null? lst) '()
               (cons (car lst) (remove-dup (filter (lambda (x) (not (equal? x (car lst)))) 
-                  
                                             (cdr lst)))))))
 ;if lst1 include in lst2
 (define include-relation
       (lambda(lst1 lst2)
-        (if (or (not (list? lst1)) (not (list? lst2))) #f
+        (if (or (not (list? lst1)) (not (list? lst2))) #t
             (let ((l1 (reverse lst1))
                   (l2 (reverse lst2)))
                   (letrec ((include-list
@@ -43,10 +39,8 @@
                                   ((null? x) #t)
                                   ((null? y) #f)
                                   ((and (list? x) (list? y) (equal? (car x) (car y))) (include-list (cdr x) (cdr y)))
-                                  (else #f)))
-                          ))
-                  (include-list l1 l2))
-            ))))
+                                  (else #f)))))
+                  (include-list l1 l2))))))
 
 (define topological-sort
       (lambda(const-list)
@@ -61,7 +55,12 @@
             (let* ((file (file->string fileName))
                    (expr-list (string->exprlist file))
                    (parsed-exprs (map parse-expr expr-list))
-                   (const-table (topological-sort(remove-dup(find-const (car parsed-exprs)))))
+				   (const-table (topological-sort(remove-dup(find-const parsed-exprs))))
                    )
             const-table)    
             ))
+			
+			
+			(display (compile-scheme-file "source.scm" ""))
+			(newline)
+			(exit)
