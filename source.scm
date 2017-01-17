@@ -1,8 +1,3 @@
-(define z '(1 2))
-(define z (+ 1 2))
-(lambda (x) x)
-(define erez (lambda (x y z) y))
-(define z (+ 1 2))
-(define z (+ 7 5))
-(define z #\a)
-(define z 'sdfsdfsd)
+#f
+#t
+
